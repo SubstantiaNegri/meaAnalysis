@@ -23,6 +23,10 @@
 #  a .pdf file depicting the spatial layout of the treatment groups across the MEA plate(s)
 #  This outputs will be written to the current working directory
 
+# Update 2018-12-21
+# * added to output: scatter plot showing activity of individual arrays within
+# assigned cohorts
+
 #----Load Required Libraries-----
 library("data.table", lib.loc="~/R-3.4.1/library")
 library("ggplot2", lib.loc="~/R-3.4.1/library")
@@ -183,14 +187,47 @@ treatment_map <- exp_assignments[
 # reclassify treatment_group as factor
 treatment_map[,treatment_group:=as.factor(treatment_group)]
 
-# generate plate map for each plate
-lapply(treatment_map[,unique(plate.num)], per.plate.treat.map)
-
 treatment_map <- merge(treatment_map,
                        treatment.samples[,.(treatment,treatment_group)],
                        by="treatment_group")
 
-#Export the details of the treatment_map as a csv file
+# treatment map plots----
+# generate plate map for each plate
+lapply(treatment_map[,unique(plate.num)], per.plate.treat.map)
+
+# generate scatter plot of treatment groups
+treatmentMapScatterPlot <-
+  ggplot(
+         treatment_map,
+         aes(
+             x=treatment_group,
+             y=logHz
+           )
+         )+
+       geom_point(
+             shape=1
+         )+
+       stat_summary(
+             fun.data = mean_se,
+             shape=""
+         )+
+       stat_summary(
+             geom="point",
+             fun.y = mean,
+             shape = "-",
+             size = 11
+         )+
+  theme_bw()
+
+ggsave(
+  filename=paste0(Sys.Date(),"_",p,"_treatment-map-scatter.pdf"),
+  plot = treatmentMapScatterPlot,
+  width = 8,
+  height = 5,
+  units = "in"
+)
+
+#Export treatment_map as .csv file----
 write.csv(
   treatment_map,
   file=paste0(Sys.Date(),"_treatment-map.csv"),
