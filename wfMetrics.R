@@ -1,7 +1,7 @@
 #!/n/app/R/3.4.1/bin/Rscript
 
 #  ****************************************************************************
-#  MEA spike-wf-metrics
+#  wfMetrics.R
 #  Version 1.4
 #  ****************************************************************************
 
@@ -55,6 +55,11 @@
 # with a single job submitted for each electrode volt/SD/time file
 # output is a wfMetrics.csv file for each electrode that will need to be
 # aggregated
+
+# Update 2018-12-23
+
+# Changed name of script to wfMetrics.R from MEA_spk-wf-metrics_v1.4.R
+# for clarity now that version control of script is being maintained with git
 
 #  Load Essential Libraries----
 library("data.table", lib.loc="~/R-3.4.1/library")

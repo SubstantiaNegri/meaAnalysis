@@ -1,7 +1,7 @@
 #!/n/app/R/3.4.1/bin/Rscript
 
 #  ****************************************************************************
-#  MEA node-wf-subset
+#  wfNodeSubset.R
 #  Version 1.3
 #  ****************************************************************************
 
@@ -34,6 +34,10 @@
 # * removed command calling for renaming of 1st column to 'spike'
 #   this call is not always accurate
 
+# Update 2018-12-23
+# * changed name of the script to wfNodeSubset.R from 
+#  MEA_node-wf-subset_v1.3.R  for clarity now
+#  that version control is being maintained with git
 
 #  Load Essential Libraries----
 # Load the data.table package to enable extended dataframe functions

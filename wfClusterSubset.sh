@@ -81,6 +81,9 @@
 
 # Update 2018-08-03
 # * updated version of MEA_node-MS-cluster called from v1.4 to v1.5
+
+# Update 2018-12-23
+# * updated R script called to msCluster.R to reflect new naming scheme
 ###########################################################################################
 
 #define line count thresholds
@@ -105,19 +108,19 @@ for f in $(ls *.csv)
 			echo "${f%.csv}" $line_count >> inactive_nodes.txt
 		elif [ "$line_count" -le "$low_count" ]
 		then
-			sbatch -p short -t $low_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/MEA_node-MS-cluster_v1.5.R $f 12
+			sbatch -p short -t $low_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R $f 12
 		elif [ "$line_count" -le "$mid_count" ]
 		then
-			sbatch -p short -t $mid_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/MEA_node-MS-cluster_v1.5.R $f 12
+			sbatch -p short -t $mid_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R $f 12
 		elif [ "$line_count" -le "$high_count"  ]
 		then
-			sbatch -p short -t $high_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/MEA_node-MS-cluster_v1.5.R $f 12
+			sbatch -p short -t $high_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R $f 12
 		else
 			echo "${f%.csv}" $line_count >> superactive_nodes.txt
 			sed 1q $f > sampled_$f
 			sed -i 1d $f
 			shuf -n $high_count $f >> sampled_$f
-			sbatch -p short -t $high_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/MEA_node-MS-cluster_v1.5.R sampled_$f 12
+			sbatch -p short -t $high_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R sampled_$f 12
 		fi
 	done; 
 

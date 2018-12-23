@@ -1,8 +1,8 @@
 #!/n/app/R/3.4.1/bin/Rscript
 
 #  ****************************************************************************
-#  MEA spk-cluster-metrics
-#  Version 1.1
+#  spkClusterMetrics.R
+#  Version 1.2
 #  ****************************************************************************
 
 #  Joseph Negri 
@@ -67,6 +67,10 @@
 
 #  added recording duration as command line argument to faciliate analyzing 
 #  recordings of different durations  
+
+#  Update 2018-12-23
+#  *updated name of script to spkClusterMetrics.R for clarity now that
+#   version control is being maintained with git
 
 # load libraries----
 library("data.table", lib.loc="~/R-3.4.1/library")

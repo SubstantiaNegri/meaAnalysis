@@ -92,6 +92,9 @@
 
 # Update 2018-12-18
 # * increased 'mid' jobs to 3hr, 'high' to 12hr, and 'super-high' to 96hr
+
+# Update 2018-12-23
+# * updated name of R script called to msCluster.R to reflect new naming scheme
 ###########################################################################################
 
 #define line count thresholds
@@ -118,18 +121,18 @@ for f in $(ls *.csv)
 		elif [ "$line_count" -le "$low_count" ]
 		then
 			echo $f
-			sbatch -p short -t $low_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/MEA_node-MS-cluster_v1.5.R $f 12
+			sbatch -p short -t $low_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R $f 12
 		elif [ "$line_count" -le "$mid_count" ]
 		then
 			echo $f
-			sbatch -p short -t $mid_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/MEA_node-MS-cluster_v1.5.R $f 12
+			sbatch -p short -t $mid_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R $f 12
 		elif [ "$line_count" -le "$high_count"  ]
 		then
 			echo $f
-			sbatch -p short -t $high_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/MEA_node-MS-cluster_v1.5.R $f 12
+			sbatch -p short -t $high_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R $f 12
 		else
 			echo "${f%.csv}" $line_count >> superactive_nodes.txt
-			sbatch -p medium -t $super_count_time -n 12 --mem=2G ~/scripts/R-3.4.1/MEA_node-MS-cluster_v1.5.R $f 12
+			sbatch -p medium -t $super_count_time -n 12 --mem=2G ~/scripts/R-3.4.1/msCluster.R $f 12
 		fi
 	done; 
 

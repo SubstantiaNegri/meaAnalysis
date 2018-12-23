@@ -11,6 +11,10 @@
 #SBATCH --mail-type=END         # Mail when the job ends  
 #write command-line commands below this line
 
+# Update 2018-12-23
+# changed name of R script called to wfNodeSubset.R
+# to reflect new naming scheme
+
 module load gcc/6.2.0 R/3.4.1
 
-srun ~/scripts/R-3.4.1/MEA_node-wf-subset_v1.3.R 1
+srun ~/scripts/R-3.4.1/wfNodeSubset.R 1

@@ -1,8 +1,8 @@
 #!/n/app/R/3.4.1/bin/Rscript
 
 #  ****************************************************************************
-#  MEA node-MS-cluster
-#  Version 1.4
+#  msCluster
+#  Version 1.5
 #  ****************************************************************************
 
 #  Joseph Negri 
@@ -48,7 +48,10 @@
 #   rather than hard coding column indexes
 # * Removed call to exclude first column ('spike') when combining data for 
 #   output
- 
+
+# Update 2018-12-23
+#  renamed script to msCluster.R from MEA_node-MS-cluster_v1.5.R for
+#  clarity now that verison are being maintained with git 
 
 #  Load Essential Libraries----
 # Load the data.table package to enable extended dataframe functions
