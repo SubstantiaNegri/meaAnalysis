@@ -15,6 +15,6 @@ module load gcc/6.2.0 R/3.4.1
 
 for f in $(ls *volt.csv)
 	do 
-	sbatch -c 1 -t 10 -p short --mem=1G --mail-type=FAIL --wrap="echo $f; ~/scripts/R-3.4.1/MEA_spk-wf-metrics_v1.4.R $f ${f%volt.csv}SD.csv ${f%volt.csv}time.csv"
+	sbatch -c 1 -t 10 -p short --mem=1G --mail-type=FAIL --wrap="echo $f; ~/scripts/R-3.4.1/wfMetrics.R $f ${f%volt.csv}SD.csv ${f%volt.csv}time.csv"
 done
 

@@ -18,12 +18,17 @@
 # changed version MEA_spk_cluster_metrics to v1.2
 # recording duration needs to be provided in seconds
 
+# Update 2018-12-23
+# changed name of R script to spkClusterMetrics.R to
+# reflect new naming scheme
+
 module load gcc/6.2.0 R/3.4.1
 
 if [ "$1" != "" ]; then
     echo "Recording Duration provided as ${1} seconds"
+    srun ~/scripts/R-3.4.1/spkClusterMetrics.R $1
 else
     echo "Error: Need to provide Recording Duration as integer in seconds"
 fi
 
-srun ~/scripts/R-3.4.1/MEA_spk-cluster-metrics_v1.2.R $1
+
