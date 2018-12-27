@@ -103,9 +103,8 @@
 # * identity of 'superactive' nodes captured, but not submitted for clustering due to long
 #   processing times required. For instance, processing of ~50K events will take >4 days.
 #   submission of these highly active nodes can be done manually if there analysis is required.
-# * added additional file to output 'active_nodes.csv' containing the line counts
+# * added additional file to output 'active_nodes.txt' containing the line counts
 #   for all nodes submitted for clustering
-# * reformatted output files to be in .csv rather than .txt format
 ###########################################################################################
 
 #define line count thresholds
@@ -116,20 +115,20 @@ shortMax=720 # 12hr in minutes
 medMax=7200 # 5days in minutes
 longMax=43200 # 30days in minutes
 
-paste -d, 'node' 'line_count' > inactive_nodes.csv
-paste -d, 'node' 'line_count' > active_nodes.csv
-paste -d, 'node' 'line_count' > superactive_nodes.csv
+echo 'node' 'line_count' > inactive_nodes.txt
+echo 'node' 'line_count' > active_nodes.csv
+echo 'node' 'line_count' > superactive_nodes.csv
 
 for f in $(ls *.csv) 
 	do
 	line_count=$(wc -l $f | cut -f1 -d' ')
 		if [ "$line_count" -le "$minimum" ]
 		then
-			paste -d, "${f%.csv}" $line_count >> inactive_nodes.csv
+			echo "${f%.csv}" $line_count >> inactive_nodes.csv
 		elif [ "$line_count" -le "$superactive_count" ]
 		then
 			echo $f
-			paste -d, "${f%.csv}" $line_count >> active_nodes.csv
+			echo "${f%.csv}" $line_count >> active_nodes.csv
 			jobtime=$(perl ~/scripts/msClusterLineCountTimeCalc.pl $line_count)
 				if [ "$jobtime" -le "$shortMax" ]
 					then
