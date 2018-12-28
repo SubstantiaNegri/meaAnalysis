@@ -124,11 +124,11 @@ for f in $(ls *.csv)
 	line_count=$(wc -l $f | cut -f1 -d' ')
 		if [ "$line_count" -le "$minimum" ]
 		then
-			echo "${f%.csv}" $line_count >> inactive_nodes.csv
+			echo "${f%.csv}" $line_count >> inactive_nodes.txt
 		elif [ "$line_count" -le "$superactive_count" ]
 		then
 			echo $f
-			echo "${f%.csv}" $line_count >> active_nodes.csv
+			echo "${f%.csv}" $line_count >> active_nodes.txt
 			jobtime=$(perl ~/scripts/msClusterLineCountTimeCalc.pl $line_count)
 				if [ "$jobtime" -le "$shortMax" ]
 					then
