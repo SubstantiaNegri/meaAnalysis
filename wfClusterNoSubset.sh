@@ -116,8 +116,8 @@ medMax=7200 # 5days in minutes
 longMax=43200 # 30days in minutes
 
 echo 'node' 'line_count' > inactive_nodes.txt
-echo 'node' 'line_count' > active_nodes.csv
-echo 'node' 'line_count' > superactive_nodes.csv
+echo 'node' 'line_count' > active_nodes.txt
+echo 'node' 'line_count' > superactive_nodes.txt
 
 for f in $(ls *.csv) 
 	do
