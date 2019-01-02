@@ -12,7 +12,6 @@
 #write command-line commands below this line
 
 #  wfClusterSubset.sh
-#  version 1.7
 #
 #  Created by Joseph Negri on 8/28/17.
 #  copyright is maintained and must be perserved.
@@ -84,43 +83,66 @@
 
 # Update 2018-12-23
 # * updated R script called to msCluster.R to reflect new naming scheme
+
+# Update 2019-01-02
+# * added call to msClusterLineCountTimeCalc.pl script which will return the 
+#   job time in minutes based on analysis of passed performance of MS clustering
+# * reorganized sbatch calls to submit to partitions based on job time estimate
+# * added additional file to output 'active_nodes.txt' containing the line counts
+#   for all nodes submitted for clustering
+# * maintained sampling of data for 'superactive' nodes, exceeding a given activity
+#   threshold (e.g. 5000 events).
 ###########################################################################################
 
 #define line count thresholds
 minimum=10
-low_count=1000
-mid_count=5000
-high_count=10000
+superactive_count=5000
 
-#define requested times
-low_count_time=15
-mid_count_time=3:00:00
-high_count_time=12:00:00
+#define time cutoffs
+shortMax=720 # 12hr in minutes
+medMax=7200 # 5days in minutes
+longMax=43200 # 30days in minutes
 
 echo 'node' 'line_count' > inactive_nodes.txt
+echo 'node' 'line_count' > active_nodes.txt
 echo 'node' 'line_count' > superactive_nodes.txt
-
+	
 for f in $(ls *.csv) 
 	do
 	line_count=$(wc -l $f | cut -f1 -d' ')
 		if [ "$line_count" -le "$minimum" ]
 		then
 			echo "${f%.csv}" $line_count >> inactive_nodes.txt
-		elif [ "$line_count" -le "$low_count" ]
+		elif [ "$line_count" -le "$superactive_count" ]
 		then
-			sbatch -p short -t $low_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R $f 12
-		elif [ "$line_count" -le "$mid_count" ]
-		then
-			sbatch -p short -t $mid_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R $f 12
-		elif [ "$line_count" -le "$high_count"  ]
-		then
-			sbatch -p short -t $high_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R $f 12
+			echo $f
+			echo "${f%.csv}" $line_count >> active_nodes.txt
+			jobtime=$(perl ~/scripts/msClusterLineCountTimeCalc.pl $line_count)
+				if [ "$jobtime" -le "$shortMax" ]
+					then
+					sbatch -p short -t $jobtime -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R $f 12
+				elif [ "$jobtime" -le "$medMax" ]
+					then
+					sbatch -p medium -t $jobtime -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R $f 12
+				else
+					sbatch -p long -t $jobtime -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R $f 12
+				fi
 		else
 			echo "${f%.csv}" $line_count >> superactive_nodes.txt
 			sed 1q $f > sampled_$f
 			sed -i 1d $f
-			shuf -n $high_count $f >> sampled_$f
-			sbatch -p short -t $high_count_time -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R sampled_$f 12
+			shuf -n $superactive_count $f >> sampled_$f
+			jobtime=$(perl ~/scripts/msClusterLineCountTimeCalc.pl $superactive_count)
+			if [ "$jobtime" -le "$shortMax" ]
+					then
+					sbatch -p short -t $jobtime -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R sampled_$f 12
+				elif [ "$jobtime" -le "$medMax" ]
+					then
+					sbatch -p medium -t $jobtime -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R sampled_$f 12
+				else
+					sbatch -p long -t $jobtime -n 12 --mem=1G ~/scripts/R-3.4.1/msCluster.R sampled_$f 12
+				fi
 		fi
 	done; 
+
 
