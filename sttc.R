@@ -32,6 +32,8 @@
 # Update 2018-12-20
 # * added revised (voltage data removed) clustered waveform file as argument
 
+# Update 2019-01-03
+# * corrected error in the sttc calculation, replaced Pa term with correct Ta term
 # libraries----
 library("data.table", lib.loc="~/R-3.4.1/library")
 
@@ -140,7 +142,7 @@ sttcCalc <- function(clusterA,clusterB,recNum,DeltaT){
   
   Pb <- sum(clusterB.time %in% clusterA.ticToc[runSum>0,time])/clusterB.N
   
-  STTC <- 0.5*((Pa-Tb)/(1-Pa*Tb)+(Pb-Ta)/(1-Pb*Pa))
+  STTC <- 0.5*((Pa-Tb)/(1-Pa*Tb)+(Pb-Ta)/(1-Pb*Ta))
   return(STTC)
 }
 
