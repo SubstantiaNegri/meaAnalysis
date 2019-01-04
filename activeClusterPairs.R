@@ -25,6 +25,11 @@
 #  the later contains pairs both active during a recording is useful for
 #  calculating spike time tiling coefficients (STTC).
 
+#  Update 2019-01-03:
+#  *added functionality to exclude instances of wells represented by a 
+#   single cluster, which was causing the script to fail.
+#  *changed call to 'sapply' to 'lapply' to address separate error.
+
 # libraries----
 library("data.table", lib.loc="~/R-3.4.1/library")
 
@@ -53,11 +58,15 @@ activeClusters <-
 
 setorder(activeClusters,wellID,nodeCluster,rec)
 
+# exclude instances of wells with single cluster
+singleClusterWell <- activeClusters[,uniqueN(nodeCluster),by=wellID][V1<2,wellID]
+activeClusters <- activeClusters[!wellID %in% singleClusterWell]
+
 # generate pairwise comparisons of all clusters within well
 activeClustersPairwiseMatrix <-
   do.call(
     rbind,
-    sapply(
+    lapply(
       unique(activeClusters$wellID),
       function(x){
         return(
