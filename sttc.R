@@ -66,12 +66,14 @@ sttcCalc <- function(clusterA,clusterB,recNum,DeltaT){
   # determine number of cluster A events within
   # recording and time interval
   clusterA.N <- 
-    clusteredWFs[time>Tinitial & time<(Tinitial+recDur)][
-      nodeCluster==clusterA & rec==recNum,.N]
+    # clusteredWFs[time>Tinitial & time<(Tinitial+recDur)][
+    #   nodeCluster==clusterA & rec==recNum,.N]
+    clusteredWFs[time>Tinitial & time<(Tinitial+recDur) & 
+        nodeCluster==clusterA & rec==recNum,.N]
   # determine timing of cluster A events within
   # recording and time interval
   clusterA.time <- 
-    clusteredWFs[time>Tinitial & time<(Tinitial+recDur)][
+    clusteredWFs[time>Tinitial & time<(Tinitial+recDur) &
       nodeCluster==clusterA & rec==recNum,time]
   clusterA.time <- clusterA.time - Tinitial
   clusterA.tic <- clusterA.time - DeltaT
@@ -115,12 +117,12 @@ sttcCalc <- function(clusterA,clusterB,recNum,DeltaT){
   # determine number of cluster B events within
   # recording and time interval
   clusterB.N <- 
-    clusteredWFs[time>Tinitial & time<(Tinitial+recDur)][
+    clusteredWFs[time>Tinitial & time<(Tinitial+recDur) &
       nodeCluster==clusterB & rec==recNum,.N]
   # determine timing of cluster B events within
   # recording and time interval
   clusterB.time <- 
-    clusteredWFs[time>Tinitial & time<(Tinitial+recDur)][
+    clusteredWFs[time>Tinitial & time<(Tinitial+recDur) &
       nodeCluster==clusterB & rec==recNum,time]
   clusterB.time <- clusterB.time - Tinitial
   clusterB.tic <- clusterB.time - DeltaT
@@ -145,7 +147,7 @@ sttcCalc <- function(clusterA,clusterB,recNum,DeltaT){
       use.names = TRUE
     )
   #round to 10X resolution of DeltaT
-  clusterB.ticToc[,time:=round(time,DeltaTprecision)]
+  clusterB.ticToc[,time:=round(time,DeltaTprecision+1)]
   clusterB.ticToc <-
     clusterB.ticToc[,.(stateChange=sum(stateChange)),time]
   
