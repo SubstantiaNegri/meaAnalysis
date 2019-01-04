@@ -50,14 +50,29 @@ recDur <- as.numeric(args[6])
 DeltaT <- as.numeric(args[7])
 clusteredWFfile <- as.character(args[8])
 outputFile <- as.character(args[9])
-clockTicks <- seq(0,recDur,0.01)
-clockTicksN <- length(clockTicks)
 
 # functions----
 
+decimalplaces <- function(x) {
+  smallestDecimal = .Machine$double.eps^0.5 #small decimal comp can calc 
+  if (abs(x - round(x)) > smallestDecimal) {
+    nchar(strsplit(sub('0+$', '', as.character(x)), ".", fixed = TRUE)[[1]][[2]])
+  } else {
+    return(0)
+  }
+}
+
 sttcCalc <- function(clusterA,clusterB,recNum,DeltaT){
-  clusterA.N <- clusteredWFs[nodeCluster==clusterA & rec==recNum,.N]
-  clusterA.time <- clusteredWFs[nodeCluster==clusterA & rec==recNum,time]
+  # determine number of cluster A events within
+  # recording and time interval
+  clusterA.N <- 
+    clusteredWFs[time>Tinitial & time<(Tinitial+recDur)][
+      nodeCluster==clusterA & rec==recNum,.N]
+  # determine timing of cluster A events within
+  # recording and time interval
+  clusterA.time <- 
+    clusteredWFs[time>Tinitial & time<(Tinitial+recDur)][
+      nodeCluster==clusterA & rec==recNum,time]
   clusterA.time <- clusterA.time - Tinitial
   clusterA.tic <- clusterA.time - DeltaT
   clusterA.toc <- clusterA.time + DeltaT
@@ -80,8 +95,8 @@ sttcCalc <- function(clusterA,clusterB,recNum,DeltaT){
       ),
       use.names = TRUE
     )
-  
-  clusterA.ticToc[,time:=round(time,2)]
+  #round to 10X resolution of DeltaT
+  clusterA.ticToc[,time:=round(time,DeltaTprecision+1)]
   clusterA.ticToc <-
     clusterA.ticToc[,.(stateChange=sum(stateChange)),time]
   
@@ -97,8 +112,16 @@ sttcCalc <- function(clusterA,clusterB,recNum,DeltaT){
   
   Ta <- clusterA.ticToc[runSum>0,.N]/clockTicksN
   
-  clusterB.N <- clusteredWFs[nodeCluster==clusterB & rec==recNum,.N]
-  clusterB.time <- clusteredWFs[nodeCluster==clusterB & rec==recNum,time]
+  # determine number of cluster B events within
+  # recording and time interval
+  clusterB.N <- 
+    clusteredWFs[time>Tinitial & time<(Tinitial+recDur)][
+      nodeCluster==clusterB & rec==recNum,.N]
+  # determine timing of cluster B events within
+  # recording and time interval
+  clusterB.time <- 
+    clusteredWFs[time>Tinitial & time<(Tinitial+recDur)][
+      nodeCluster==clusterB & rec==recNum,time]
   clusterB.time <- clusterB.time - Tinitial
   clusterB.tic <- clusterB.time - DeltaT
   clusterB.toc <- clusterB.time + DeltaT
@@ -121,8 +144,8 @@ sttcCalc <- function(clusterA,clusterB,recNum,DeltaT){
       ),
       use.names = TRUE
     )
-  
-  clusterB.ticToc[,time:=round(time,2)]
+  #round to 10X resolution of DeltaT
+  clusterB.ticToc[,time:=round(time,DeltaTprecision)]
   clusterB.ticToc <-
     clusterB.ticToc[,.(stateChange=sum(stateChange)),time]
   
@@ -145,6 +168,15 @@ sttcCalc <- function(clusterA,clusterB,recNum,DeltaT){
   STTC <- 0.5*((Pa-Tb)/(1-Pa*Tb)+(Pb-Ta)/(1-Pb*Ta))
   return(STTC)
 }
+
+# main----
+
+# determine number of decimal place in DeltaT
+DeltaTprecision <- decimalplaces(DeltaT)
+
+# generate clock ticks at 10X resolution of DeltaT
+clockTicks <- seq(0,recDur,10^(-DeltaTprecision-1))
+clockTicksN <- length(clockTicks)
 
 # load data---
 

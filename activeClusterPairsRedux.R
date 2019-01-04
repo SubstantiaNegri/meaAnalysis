@@ -36,6 +36,7 @@ args <- commandArgs(trailingOnly = TRUE)
 activeClusterPairs <-
   read.csv(
     args[1],
+    stringsAsFactors = FALSE,
     header = FALSE
   )
 
@@ -43,6 +44,7 @@ activeClusterPairs <-
 sttcData <-
   read.csv(
     args[2],
+    stringsAsFactors = FALSE,
     header = FALSE
   )
 
@@ -82,7 +84,11 @@ pairsDone <-
 activeClusterPairsRedux <-
   activeClusterPairs[which(c(pairsToDo %in% pairsDone)==FALSE),]
 
-write.csv(
+write.table(
   activeClusterPairsRedux,
-  paste0(Sys.Date(),"_activeClusterPairsRedux.csv")
+  paste0(Sys.Date(),"_activeClusterPairsRedux.csv"),
+  sep = ",",
+  quote = FALSE,
+  row.names = FALSE,
+  col.names = FALSE
 )
