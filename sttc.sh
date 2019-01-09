@@ -22,11 +22,13 @@
 module load gcc/6.2.0 R/3.4.1
 
 if [ "$5" != "" ]; then
-	echo "active cluster pairs file provided ${1}
-		revised clustered waveforms file provided ${2}
+	echo "
+		active cluster pairs file provided: ${1}
+		revised clustered waveforms file provided: ${2}
 		Tinit provided: ${3}
 		recDur provided: ${4}
-		DeltaT provided: ${5}"
+		DeltaT provided: ${5}
+		output file provided: ${6}"
 
 	Date=$(date '+%Y-%m-%d')
 	clusterPairFile=$1
@@ -34,13 +36,18 @@ if [ "$5" != "" ]; then
 	Tinit=$3
 	recDur=$4
 	DeltaT=$5
-	outputFile=${Date}_sttc.csv
 
+	if [ "$6" != "" ]; then
+	outputFile=$6
+        touch $outputFile
+	else
+	outputFile=${Date}_sttc.csv
 	touch ${Date}_sttc.csv
+	fi
 
 	while read -r LINE;
  		do IFS=\, read -a cols <<< "$LINE";
- 		sbatch -n 1 -t 2 -p short --mem=200M ~/scripts/R-3.4.1/sttc.R ${cols[@]} "$Tinit" "$recDur" "$DeltaT" "$clusteredWFfile" "$outputFile";
+ 		sbatch -n 1 -t 3 -p short --mem=2G ~/scripts/R-3.4.1/sttc.R ${cols[@]} "$Tinit" "$recDur" "$DeltaT" "$clusteredWFfile" "$outputFile";
  		done < "$clusterPairFile"
 
 else 
