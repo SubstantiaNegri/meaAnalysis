@@ -151,16 +151,16 @@ clockTicksN <- length(clockTicks)
 # generate table to populate
 sttcSim <- 
   data.table(
-    clusterA=rep(0,iterations),
-    clusterB=rep(0,iterations),
-    DeltaT=rep(0,iterations),
+    clusterA=rep(clusterA,iterations),
+    clusterB=rep(clusterB,iterations),
+    DeltaT=rep(DeltaT,iterations),
     sttc=rep(0,iterations)
     )
 
 # run iterations of STTC simulations
 for(i in 1:iterations){
   sttcSimValue = sttcSimCalc(clusterA,clusterB,DeltaT)
-  sttcSim[i,c("clusterA","clusterB","DeltaT","sttc"):=list(clusterA,clusterB,DeltaT,sttcSimValue)]
+  sttcSim[i,sttc:=sttcSimValue]
 }
 
 # append to output file
