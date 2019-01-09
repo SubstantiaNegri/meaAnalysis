@@ -104,13 +104,7 @@ sttcCalc <- function(clusterA,clusterB,recNum,DeltaT){
   
   setorder(clusterA.ticToc, time)
   
-  clusterA.runSum <- c()
-  for(i in 1:clockTicksN){
-    clusterA.runSum[i] <-
-      sum(clusterA.ticToc$stateChange[1:i])
-  }
-  
-  clusterA.ticToc[,runSum:=clusterA.runSum]
+  clusterA.ticToc[,runSum:=cumsum(stateChange)]
   
   Ta <- clusterA.ticToc[runSum>0,.N]/clockTicksN
   
@@ -153,13 +147,7 @@ sttcCalc <- function(clusterA,clusterB,recNum,DeltaT){
   
   setorder(clusterB.ticToc, time)
   
-  clusterB.runSum <- c()
-  for(i in 1:clockTicksN){
-    clusterB.runSum[i] <-
-      sum(clusterB.ticToc$stateChange[1:i])
-  }
-  
-  clusterB.ticToc[,runSum:=clusterB.runSum]
+  clusterB.ticToc[,runSum:=cumsum(stateChange)]
   
   Tb <- clusterB.ticToc[runSum>0,.N]/clockTicksN
   
